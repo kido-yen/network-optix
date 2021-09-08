@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: network-optix
+  labels:
+    app: network-optix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: network-optix
+  template:
+    metadata:
+      labels:
+        app: network-optix
+    spec:
+      containers:
+      - name: mediaserver
+        image: kidoyen/mediaserver
+#        securityContext:
+#          privileged: true
+        volumeMounts:
+          - name: mypvc
+            mountPath: /mnt
+        ports: 
+        - containerPort: 7001
+      hostNetwork: true
+      volumes:
+       - name: mypvc
+         persistentVolumeClaim:
+           claimName: rbd-pvc
+           readOnly: false
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: network-optix
+  labels:
+    name: network-optix
+spec:
+  type: NodePort
+  ports:
+    - port: 7001
+      nodePort: 32001
+      name: mediaserver
+  selector:
+    app: network-optix
+
