@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  network-optix:
+    build: ./docker
+
+    # 指定容器的名稱
+    container_name: network-optix
+
+    ports:
+      - "7001:7001"
+
+    restart: unless-stopped
+
